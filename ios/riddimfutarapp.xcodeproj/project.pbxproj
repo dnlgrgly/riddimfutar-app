@@ -14,6 +14,11 @@
 		26E58DB6EB34A88C1DE9BC0B /* libPods-riddimfutarapp-riddimfutarappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02B20F100070A41652DDF3D7 /* libPods-riddimfutarapp-riddimfutarappTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D2C1C3C2ACADE26AF5FE48B6 /* libPods-riddimfutarapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0685AA8181FACCB84A0DA27D /* libPods-riddimfutarapp.a */; };
+		84BF2B2E9F8D40319CF13334 /* 5by7.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA15483C360A4E7E84DB7FB6 /* 5by7.ttf */; };
+		F3284B577A584B2EB2FB8753 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C0515F953EF48FCAB473A54 /* OpenSans-Bold.ttf */; };
+		142B1894D568407E93A2E1F1 /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4960F8075E2648B4B42EBA8F /* OpenSans-Italic.ttf */; };
+		B80066759C7D46DB92960EE4 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C1957D0D3E2459889A94B7D /* OpenSans-Regular.ttf */; };
+		C6439A8FE2E54EFFAC486B61 /* RoadRage.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F0079DF88ED48AC95B2C2A8 /* RoadRage.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +49,11 @@
 		8CE58DEC688EE0148EC29E5D /* Pods-riddimfutarapp-riddimfutarappTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riddimfutarapp-riddimfutarappTests.release.xcconfig"; path = "Target Support Files/Pods-riddimfutarapp-riddimfutarappTests/Pods-riddimfutarapp-riddimfutarappTests.release.xcconfig"; sourceTree = "<group>"; };
 		D6D8AD5BC0551FB3F65D5BD2 /* Pods-riddimfutarapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riddimfutarapp.release.xcconfig"; path = "Target Support Files/Pods-riddimfutarapp/Pods-riddimfutarapp.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		CA15483C360A4E7E84DB7FB6 /* 5by7.ttf */ = {isa = PBXFileReference; name = "5by7.ttf"; path = "../assets/fonts/5by7.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7C0515F953EF48FCAB473A54 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4960F8075E2648B4B42EBA8F /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; name = "OpenSans-Italic.ttf"; path = "../assets/fonts/OpenSans-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4C1957D0D3E2459889A94B7D /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7F0079DF88ED48AC95B2C2A8 /* RoadRage.ttf */ = {isa = PBXFileReference; name = "RoadRage.ttf"; path = "../assets/fonts/RoadRage.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +132,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				8A9607FA78B440C09916280F /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +158,19 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		8A9607FA78B440C09916280F /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				CA15483C360A4E7E84DB7FB6 /* 5by7.ttf */,
+				7C0515F953EF48FCAB473A54 /* OpenSans-Bold.ttf */,
+				4960F8075E2648B4B42EBA8F /* OpenSans-Italic.ttf */,
+				4C1957D0D3E2459889A94B7D /* OpenSans-Regular.ttf */,
+				7F0079DF88ED48AC95B2C2A8 /* RoadRage.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -242,6 +266,11 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				84BF2B2E9F8D40319CF13334 /* 5by7.ttf in Resources */,
+				F3284B577A584B2EB2FB8753 /* OpenSans-Bold.ttf in Resources */,
+				142B1894D568407E93A2E1F1 /* OpenSans-Italic.ttf in Resources */,
+				B80066759C7D46DB92960EE4 /* OpenSans-Regular.ttf in Resources */,
+				C6439A8FE2E54EFFAC486B61 /* RoadRage.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
