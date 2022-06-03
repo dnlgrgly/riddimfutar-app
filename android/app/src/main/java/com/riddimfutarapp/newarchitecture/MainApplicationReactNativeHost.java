@@ -1,4 +1,4 @@
-package com.riddimfutarapp.newarchitecture;
+package com.dnlgrgly.riddimfutar.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.riddimfutarapp.BuildConfig;
-import com.riddimfutarapp.newarchitecture.components.MainComponentsRegistry;
-import com.riddimfutarapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.dnlgrgly.riddimfutar.BuildConfig;
+import com.dnlgrgly.riddimfutar.newarchitecture.components.MainComponentsRegistry;
+import com.dnlgrgly.riddimfutar.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

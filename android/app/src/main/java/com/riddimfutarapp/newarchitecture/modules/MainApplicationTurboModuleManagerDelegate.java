@@ -1,4 +1,4 @@
-package com.riddimfutarapp.newarchitecture.modules;
+package com.dnlgrgly.riddimfutar.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

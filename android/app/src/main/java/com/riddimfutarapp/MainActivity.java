@@ -1,4 +1,4 @@
-package com.riddimfutarapp;
+package com.dnlgrgly.riddimfutar;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

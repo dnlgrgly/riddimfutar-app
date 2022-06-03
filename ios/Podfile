@@ -19,16 +19,12 @@ target 'riddimfutarapp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
   target 'riddimfutarappTests' do
     inherit! :complete
     # Pods for testing
   end
-
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable the next line.
-  use_flipper!()
 
   post_install do |installer|
     react_native_post_install(installer)
