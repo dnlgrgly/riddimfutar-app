@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Easing } from "react-native";
 import TextTicker from "react-native-text-ticker";
-import { Colors, CommonStyles, Fonts } from "../common/Styles";
+import { Colors, CommonStyles, Fonts } from "../../common/Styles";
 
 type Props = {
   text: string;
