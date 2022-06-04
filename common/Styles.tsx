@@ -18,7 +18,14 @@ export const Colors = {
 
 export const CommonStyles = StyleSheet.create({
   text: {
-    fontSize: 16,
+    fontSize: 18,
+    color: Colors.white,
+    fontFamily: Fonts.uiBold,
+  },
+  textSmall: {
+    fontSize: 14,
+    color: Colors.white,
+    fontFamily: Fonts.ui,
   },
   center: {
     display: "flex",

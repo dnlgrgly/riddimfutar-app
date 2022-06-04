@@ -11,13 +11,14 @@ import {
   RollingText,
   Vehicle,
 } from "../../common";
-import Logo from "../assets/svg/logo.svg";
+import Logo from "../../assets/svg/logo.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../../common/api";
+import { VehicleList, VehiclesList } from "./VehicleList";
 
 export const HomePage = () => {
   const [announcement, setAnnouncement] = useState("");
-  const [data, setData] = useState<Vehicle[]>();
+  const [data, setData] = useState<VehiclesList>("loading");
 
   const getAnnouncement = async () => {
     const res = await API.getMetadata();
@@ -29,7 +30,8 @@ export const HomePage = () => {
       position.coords.latitude,
       position.coords.longitude
     );
-    setData(res.data);
+
+    setData(res ? res : "error");
   };
 
   useEffect(() => {
@@ -39,13 +41,13 @@ export const HomePage = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <Image source={require("../assets/svg/logo.svg")} />
-      <View style={[CommonStyles.center, { marginBottom: 14 }]}>
+      <View style={[CommonStyles.center, { marginBottom: 20 }]}>
         <Logo height={60} width={266} />
       </View>
       <View style={[CommonStyles.center, { marginBottom: 14 }]}>
         <RollingText text={announcement} />
       </View>
+      <VehicleList vehicles={data} />
     </SafeAreaView>
   );
 };
@@ -55,5 +57,6 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     backgroundColor: Colors.purple,
+    paddingTop: 20,
   },
 });
