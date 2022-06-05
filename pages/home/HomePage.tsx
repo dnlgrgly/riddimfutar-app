@@ -3,18 +3,29 @@ import Geolocation, {
 } from "@react-native-community/geolocation";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { StatusBar, StyleSheet, View } from "react-native";
-import { Colors, CommonStyles } from "../../common";
+import { RefreshControl, StyleSheet, View } from "react-native";
+import { Colors, CommonStyles, Vehicle } from "../../common";
 import Logo from "../../assets/svg/logo.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../../common/api";
 import { VehicleList, VehiclesState } from "./VehicleList";
 import { ScrollView } from "react-native-gesture-handler";
 import { RollingText } from "./RollingText";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
 
-export const HomePage = () => {
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export const HomePage = ({ navigation }: Props) => {
   const [announcement, setAnnouncement] = useState("");
-  const [data, setData] = useState<VehiclesState>("loading");
+  const [data, setData] = useState<VehiclesState>();
+  const [loading, setLoading] = useState(true);
+
+  const onRefresh = async () => {
+    await getAnnouncement();
+    await Geolocation.getCurrentPosition(async (res) => await getList(res));
+    setLoading(false);
+  };
 
   const getAnnouncement = async () => {
     const res = await API.getMetadata();
@@ -30,22 +41,27 @@ export const HomePage = () => {
     setData(res ? res : "error");
   };
 
+  const onCardTap = (vehicle: Vehicle) => {
+    navigation.navigate("Player", { vehicle });
+  };
+
   useEffect(() => {
-    getAnnouncement();
-    Geolocation.getCurrentPosition((res) => getList(res));
+    onRefresh();
   }, []);
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ paddingBottom: 40 }}
-      scrollEnabled={typeof data !== "string"}
+      refreshControl={
+        <RefreshControl
+          refreshing={loading}
+          onRefresh={onRefresh}
+          tintColor={"white"}
+          colors={["white"]}
+        />
+      }
     >
-      <StatusBar
-        animated={true}
-        backgroundColor="#61dafb"
-        barStyle={"light-content"}
-      />
       <SafeAreaView edges={["top", "left", "right"]}>
         <View style={[CommonStyles.center, { marginBottom: 20 }]}>
           <Logo height={60} width={266} />
@@ -53,7 +69,7 @@ export const HomePage = () => {
         <View style={[CommonStyles.center, { marginBottom: 14 }]}>
           <RollingText text={announcement} />
         </View>
-        <VehicleList vehicles={data} />
+        <VehicleList vehicles={data} onCardTap={onCardTap} />
       </SafeAreaView>
     </ScrollView>
   );

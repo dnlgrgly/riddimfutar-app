@@ -1,39 +1,19 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import {
-  Colors,
-  CommonStyles,
-  LoadingSpinner,
-  Vehicle,
-  VehicleIcon,
-} from "../../common";
+import { StyleSheet, Text, View } from "react-native";
+import { CommonStyles, Vehicle } from "../../common";
 import { ErrorText } from "./ErrorText";
+import { VehicleCard } from "./VehicleCard";
 
-export type VehiclesState = Vehicle[] | "loading" | "error";
+export type VehiclesState = Vehicle[] | "error" | undefined;
 
 type Props = {
   vehicles: VehiclesState;
+  onCardTap: (vehicle: Vehicle) => void;
 };
 
-const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => {
-  return (
-    <Pressable
-      onTouchEnd={() => {
-        console.warn(`hi from: ${vehicle.tripHeadsign}`);
-      }}
-      style={[styles.cardContainer, { borderColor: vehicle.color }]}
-    >
-      <VehicleIcon vehicle={vehicle} />
-      <Text style={styles.cardText}>
-        {`${vehicle.shortName} ▶️ ${vehicle.tripHeadsign}`}
-      </Text>
-    </Pressable>
-  );
-};
-
-export const VehicleList = ({ vehicles }: Props) => {
-  if (vehicles === "loading") {
-    return <LoadingSpinner />;
+export const VehicleList = ({ vehicles, onCardTap }: Props) => {
+  if (!vehicles) {
+    return <></>;
   } else if (vehicles === "error") {
     return <ErrorText />;
   }
@@ -47,7 +27,13 @@ export const VehicleList = ({ vehicles }: Props) => {
         A közeledben levő aktív BKK járműveket listázzuk.
       </Text>
       {vehicles.map((vehicle) => {
-        return <VehicleCard key={vehicle.tripId} vehicle={vehicle} />;
+        return (
+          <VehicleCard
+            key={vehicle.tripId}
+            vehicle={vehicle}
+            onCardTap={onCardTap}
+          />
+        );
       })}
     </View>
   );
@@ -56,20 +42,5 @@ export const VehicleList = ({ vehicles }: Props) => {
 const styles = StyleSheet.create({
   container: {
     margin: 14,
-  },
-  cardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.purpleLight,
-    padding: 14,
-    marginVertical: 10,
-    borderLeftWidth: 10,
-    borderRadius: 5,
-  },
-  cardText: {
-    ...CommonStyles.text,
-    ...CommonStyles.textBold,
-    flex: 1,
-    marginLeft: 14,
   },
 });

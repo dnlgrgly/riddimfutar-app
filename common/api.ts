@@ -32,7 +32,6 @@ export const API = {
     }
 
     return data.map((vehicleWithTrip: any) => {
-      console.log(vehicleWithTrip);
       return {
         color: `#${vehicleWithTrip.trip.color}`,
         shortName: vehicleWithTrip.trip.shortName,
