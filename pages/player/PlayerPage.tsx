@@ -9,7 +9,7 @@ import { OBUDisplay } from "./OBUDisplay";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Player">;
 
-export const PlayerPage = ({ route }: Props) => {
+export const PlayerPage = ({ navigation, route }: Props) => {
   const trip = route.params.trip;
   const [nextStop, setNextStop] = useState<string | undefined>();
   const [terminus, setTerminus] = useState<string | undefined>();
@@ -17,6 +17,7 @@ export const PlayerPage = ({ route }: Props) => {
   return (
     <View style={styles.container}>
       <AudioPlayer
+        navigation={navigation}
         trip={trip}
         setNextStop={setNextStop}
         setTerminus={setTerminus}
