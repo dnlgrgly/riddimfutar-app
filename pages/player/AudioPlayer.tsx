@@ -2,8 +2,9 @@ import Geolocation from "@react-native-community/geolocation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
+import Sound from "react-native-sound";
 import { RootStackParamList } from "../../App";
-import { API, Trip } from "../../common";
+import { API, Stop, Trip } from "../../common";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -14,6 +15,20 @@ type Props = {
 
 const calculateDistance = () => {};
 
+// const networkSoundWrapper =
+
+const crossfadePlayer = async (sound: Sound, nextSound: Sound) => {
+  const length = sound.getDuration() * 1000;
+
+  sound.play();
+
+  setTimeout(() => {
+    nextSound.play(() => {
+      return Promise.resolve();
+    });
+  }, length - 10);
+};
+
 export const AudioPlayer = ({
   navigation,
   trip,
@@ -21,9 +36,10 @@ export const AudioPlayer = ({
   setTerminus,
 }: Props) => {
   // progress of distance between previous and next stop
-  const [progress, setProgress] = useState(-1);
+  let progress = -1;
   // index of next stop
-  const [nextStopIndex, setNextStopIndex] = useState(-1);
+  let nextStopIndex = -1;
+  let stops: Stop[];
 
   const initFirstStop = async () => {
     const vehicleDetails = await API.getVehicleDetails(trip.tripId);
@@ -35,7 +51,7 @@ export const AudioPlayer = ({
       return;
     }
 
-    const { stops, vehicle } = vehicleDetails;
+    const { stops: stopData, vehicle } = vehicleDetails;
 
     // if vehicle is too close to the next stop when beginning the play,
     // skip that stop
@@ -46,8 +62,8 @@ export const AudioPlayer = ({
 
     // if vehicle is already approaching terminus when opening, we can't provide a good UX
     if (
-      sequence > stops.length ||
-      (sequence == stops.length && vehicle.stopDistancePercent > 60)
+      sequence > stopData.length ||
+      (sequence == stopData.length && vehicle.stopDistancePercent > 60)
     ) {
       Alert.alert(
         "A járat túl közel van a végállomáshoz. Legközelebb próbáld hamarabb elindítani a RIDIDMFUTÁRT!"
@@ -56,11 +72,63 @@ export const AudioPlayer = ({
       return;
     }
 
-    setNextStop(stops[sequence].name);
-    setNextStopIndex(sequence);
+    stops = stopData;
+    nextStopIndex = sequence;
+    progress = vehicle.stopDistancePercent;
 
-    setProgress(vehicle.stopDistancePercent);
-    setTerminus(stops[vehicleDetails.stops.length - 1].name);
+    setNextStop(stops[nextStopIndex].name);
+    setTerminus(stops[stops.length - 1].name);
+
+    playWelcomeSignal();
+  };
+
+  const playWelcomeSignal = () => {
+    const welcomeOnboard = new Sound(
+      "https://storage.googleapis.com/futar/EF-udv.mp3"
+    );
+    const nextStop = new Sound(
+      "https://storage.googleapis.com/futar/EF-kov.mp3"
+    );
+    const stop1 = new Sound(
+      `https://storage.googleapis.com/futar/${stops[nextStopIndex].fileName}`
+    );
+    const sound0 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/0.mp3`
+    );
+    const sound1 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/1.mp3`
+    );
+    const sound2 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/2.mp3`
+    );
+    const sound3 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/3.mp3`
+    );
+    const sound4 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/4.mp3`
+    );
+    const sound5 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/5.mp3`
+    );
+    const sound6 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/6.mp3`
+    );
+    const sound7 = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/7.mp3`
+    );
+    const drop = new Sound(
+      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/drop.mp3`
+    );
+
+    setTimeout(() => {
+      welcomeOnboard.play(() => {
+        nextStop.play(() => {
+          stop1.play(() => {
+            crossfadePlayer(sound3, sound4);
+          });
+        });
+      });
+    }, 1000);
   };
 
   const startListeningForLocation = async () => {

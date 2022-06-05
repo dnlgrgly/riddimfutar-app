@@ -13,16 +13,16 @@ export const MusicVisualizer = ({ tripType }: Props) => {
     Animated.loop(
       Animated.timing(rotationAnim, {
         toValue: 1,
-        duration: 3000,
+        duration: 2000,
         useNativeDriver: true,
         easing: Easing.linear,
       })
     ).start();
   };
 
-  // useEffect(() => {
-  //   startRotation();
-  // });
+  useEffect(() => {
+    startRotation();
+  });
 
   const spin = rotationAnim.interpolate({
     inputRange: [0, 1],
