@@ -1,74 +1,53 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   Colors,
   CommonStyles,
-  Fonts,
+  LoadingSpinner,
   Vehicle,
-  VehicleType,
+  VehicleIcon,
 } from "../../common";
-import Bus from "../../assets/svg/bkk_bus.svg";
-import Tram from "../../assets/svg/bkk_tram.svg";
-import Trolley from "../../assets/svg/bkk_trolley.svg";
-import Night from "../../assets/svg/bkk_night.svg";
+import { ErrorText } from "./ErrorText";
 
-export type VehiclesList = Vehicle[] | "loading" | "error";
+export type VehiclesState = Vehicle[] | "loading" | "error";
 
 type Props = {
-  vehicles: VehiclesList;
+  vehicles: VehiclesState;
 };
 
 const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => {
-  const ICON_SIZE = 30;
-
-  const determineIconFromType = (type: VehicleType): JSX.Element => {
-    switch (type) {
-      case "BUS":
-        return <Bus width={ICON_SIZE} height={ICON_SIZE} />;
-      case "TRAM":
-        return <Tram width={ICON_SIZE} height={ICON_SIZE} />;
-      case "TROLLEY":
-        return <Trolley width={ICON_SIZE} height={ICON_SIZE} />;
-      case "NIGHT":
-        return <Night width={ICON_SIZE} height={ICON_SIZE} />;
-    }
-  };
-
-  console.log(vehicle);
-
   return (
-    <View style={[styles.cardContainer, { borderColor: vehicle.color }]}>
-      {determineIconFromType(vehicle.type)}
-      <Text style={[CommonStyles.text, { marginLeft: 14 }]}>
+    <Pressable
+      onTouchEnd={() => {
+        console.warn(`hi from: ${vehicle.tripHeadsign}`);
+      }}
+      style={[styles.cardContainer, { borderColor: vehicle.color }]}
+    >
+      <VehicleIcon vehicle={vehicle} />
+      <Text style={styles.cardText}>
         {`${vehicle.shortName} ▶️ ${vehicle.tripHeadsign}`}
       </Text>
-    </View>
+    </Pressable>
   );
 };
 
 export const VehicleList = ({ vehicles }: Props) => {
   if (vehicles === "loading") {
-    return (
-      <View>
-        <Text style={CommonStyles.text}>toltes...</Text>
-      </View>
-    );
+    return <LoadingSpinner />;
   } else if (vehicles === "error") {
-    return (
-      <View>
-        <Text style={CommonStyles.text}>nemjo</Text>
-      </View>
-    );
+    return <ErrorText />;
   }
 
   return (
     <View style={styles.container}>
-      <Text style={CommonStyles.text}>Válassz járatot!</Text>
+      <Text style={[CommonStyles.text, CommonStyles.textBold]}>
+        Válassz járatot!
+      </Text>
       <Text style={CommonStyles.textSmall}>
         A közeledben levő aktív BKK járműveket listázzuk.
       </Text>
       {vehicles.map((vehicle) => {
-        return <VehicleCard vehicle={vehicle} />;
+        return <VehicleCard key={vehicle.tripId} vehicle={vehicle} />;
       })}
     </View>
   );
@@ -86,5 +65,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderLeftWidth: 10,
     borderRadius: 5,
+  },
+  cardText: {
+    ...CommonStyles.text,
+    ...CommonStyles.textBold,
+    flex: 1,
+    marginLeft: 14,
   },
 });

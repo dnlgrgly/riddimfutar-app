@@ -17,15 +17,29 @@ export const Colors = {
 };
 
 export const CommonStyles = StyleSheet.create({
+  heading: {
+    fontSize: 28,
+    color: Colors.white,
+    fontFamily: Fonts.uiBold,
+  },
   text: {
     fontSize: 18,
     color: Colors.white,
-    fontFamily: Fonts.uiBold,
+    fontFamily: Fonts.ui,
   },
   textSmall: {
     fontSize: 14,
     color: Colors.white,
     fontFamily: Fonts.ui,
+  },
+  textBold: {
+    fontFamily: Fonts.uiBold,
+  },
+  textItalic: {
+    fontFamily: Fonts.uiItalic,
+  },
+  textCenter: {
+    textAlign: "center",
   },
   center: {
     display: "flex",

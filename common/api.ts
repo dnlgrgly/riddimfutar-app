@@ -6,11 +6,11 @@ const BASE_URL = "http://localhost:8080/api/v1";
 
 const determineVehicleTypeFromColor = (input: string): VehicleType => {
   switch (input) {
-    case "009FE3":
+    case "009EE3":
       return "BUS";
     case "FFD800":
       return "TRAM";
-    case "FF1609":
+    case "E41F18":
       return "TROLLEY";
     default:
       return "NIGHT";

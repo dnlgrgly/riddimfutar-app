@@ -3,22 +3,18 @@ import Geolocation, {
 } from "@react-native-community/geolocation";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import {
-  Colors,
-  CommonStyles,
-  Fonts,
-  RollingText,
-  Vehicle,
-} from "../../common";
+import { StatusBar, StyleSheet, View } from "react-native";
+import { Colors, CommonStyles } from "../../common";
 import Logo from "../../assets/svg/logo.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../../common/api";
-import { VehicleList, VehiclesList } from "./VehicleList";
+import { VehicleList, VehiclesState } from "./VehicleList";
+import { ScrollView } from "react-native-gesture-handler";
+import { RollingText } from "./RollingText";
 
 export const HomePage = () => {
   const [announcement, setAnnouncement] = useState("");
-  const [data, setData] = useState<VehiclesList>("loading");
+  const [data, setData] = useState<VehiclesState>("loading");
 
   const getAnnouncement = async () => {
     const res = await API.getMetadata();
@@ -40,15 +36,26 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <View style={[CommonStyles.center, { marginBottom: 20 }]}>
-        <Logo height={60} width={266} />
-      </View>
-      <View style={[CommonStyles.center, { marginBottom: 14 }]}>
-        <RollingText text={announcement} />
-      </View>
-      <VehicleList vehicles={data} />
-    </SafeAreaView>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 40 }}
+      scrollEnabled={typeof data !== "string"}
+    >
+      <StatusBar
+        animated={true}
+        backgroundColor="#61dafb"
+        barStyle={"light-content"}
+      />
+      <SafeAreaView edges={["top", "left", "right"]}>
+        <View style={[CommonStyles.center, { marginBottom: 20 }]}>
+          <Logo height={60} width={266} />
+        </View>
+        <View style={[CommonStyles.center, { marginBottom: 14 }]}>
+          <RollingText text={announcement} />
+        </View>
+        <VehicleList vehicles={data} />
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
