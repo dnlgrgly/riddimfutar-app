@@ -1,24 +1,28 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "../../App";
 import { Colors } from "../../common";
+import { AudioPlayer } from "./AudioPlayer";
 import { MusicVisualizer } from "./MusicVisualizer";
 import { OBUDisplay } from "./OBUDisplay";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Player">;
 
 export const PlayerPage = ({ route }: Props) => {
-  const vehicle = route.params.vehicle;
+  const trip = route.params.trip;
+  const [nextStop, setNextStop] = useState<string | undefined>();
+  const [terminus, setTerminus] = useState<string | undefined>();
 
   return (
     <View style={styles.container}>
-      <OBUDisplay
-        vehicle={vehicle}
-        terminus={vehicle.tripHeadsign}
-        nextStop={vehicle.tripHeadsign}
+      <AudioPlayer
+        trip={trip}
+        setNextStop={setNextStop}
+        setTerminus={setTerminus}
       />
-      <MusicVisualizer vehicleType={vehicle.type} />
+      <OBUDisplay trip={trip} nextStop={nextStop} terminus={terminus} />
+      <MusicVisualizer tripType={trip.type} />
     </View>
   );
 };

@@ -1,27 +1,27 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { Colors, CommonStyles, Vehicle, VehicleIcon } from "../../common";
+import { Colors, CommonStyles, Trip, VehicleIcon } from "../../common";
 
-export type VehiclesState = Vehicle[] | "error" | undefined;
+export type VehiclesState = Trip[] | "error" | undefined;
 
 type Props = {
-  vehicle: Vehicle;
-  onCardTap: (vehicle: Vehicle) => void;
+  trip: Trip;
+  onCardTap: (trip: Trip) => void;
 };
 
-export const VehicleCard = ({ vehicle, onCardTap }: Props) => {
+export const VehicleCard = ({ trip, onCardTap }: Props) => {
   const onTouchEnd = () => {
-    onCardTap(vehicle);
+    onCardTap(trip);
   };
 
   return (
     <Pressable
       onTouchEnd={onTouchEnd}
-      style={[styles.cardContainer, { borderColor: vehicle.color }]}
+      style={[styles.cardContainer, { borderColor: trip.color }]}
     >
-      <VehicleIcon type={vehicle.type} />
+      <VehicleIcon type={trip.type} />
       <Text style={styles.cardText}>
-        {`${vehicle.shortName} ▶️ ${vehicle.tripHeadsign}`}
+        {`${trip.shortName} ▶️ ${trip.tripHeadsign}`}
       </Text>
     </Pressable>
   );

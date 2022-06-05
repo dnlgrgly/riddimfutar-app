@@ -1,20 +1,20 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { CommonStyles, Vehicle } from "../../common";
+import { CommonStyles, Trip } from "../../common";
 import { ErrorText } from "./ErrorText";
 import { VehicleCard } from "./VehicleCard";
 
-export type VehiclesState = Vehicle[] | "error" | undefined;
+export type VehiclesState = Trip[] | "error" | undefined;
 
 type Props = {
-  vehicles: VehiclesState;
-  onCardTap: (vehicle: Vehicle) => void;
+  nearbyVehicles: VehiclesState;
+  onCardTap: (trip: Trip) => void;
 };
 
-export const VehicleList = ({ vehicles, onCardTap }: Props) => {
-  if (!vehicles) {
+export const VehicleList = ({ nearbyVehicles, onCardTap }: Props) => {
+  if (!nearbyVehicles) {
     return <></>;
-  } else if (vehicles === "error") {
+  } else if (nearbyVehicles === "error") {
     return <ErrorText />;
   }
 
@@ -26,13 +26,9 @@ export const VehicleList = ({ vehicles, onCardTap }: Props) => {
       <Text style={CommonStyles.textSmall}>
         A közeledben levő aktív BKK járműveket listázzuk.
       </Text>
-      {vehicles.map((vehicle) => {
+      {nearbyVehicles.map((trip) => {
         return (
-          <VehicleCard
-            key={vehicle.tripId}
-            vehicle={vehicle}
-            onCardTap={onCardTap}
-          />
+          <VehicleCard key={trip.tripId} trip={trip} onCardTap={onCardTap} />
         );
       })}
     </View>

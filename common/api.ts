@@ -1,10 +1,10 @@
 import axios from "axios";
-import { Vehicle, VehicleType } from "./Types";
+import { Trip, TripType, VehicleDetails } from "./Types";
 
 // const BASE_URL = "https://riddimfutar.ey.r.appspot.com/api/v1";
 const BASE_URL = "http://localhost:8080/api/v1";
 
-const determineVehicleTypeFromColor = (input: string): VehicleType => {
+const determineTripTypeFromColor = (input: string): TripType => {
   switch (input) {
     case "009EE3":
       return "BUS";
@@ -22,7 +22,7 @@ export const API = {
   getNearbyVehicles: async (
     lat: number,
     lon: number
-  ): Promise<Vehicle[] | undefined> => {
+  ): Promise<Trip[] | undefined> => {
     const { status, data } = await axios.get(
       `${BASE_URL}/vehicles?lat=${lat}&lon=${lon}`
     );
@@ -32,13 +32,28 @@ export const API = {
     }
 
     return data.map((vehicleWithTrip: any) => {
+      const { color, shortName, tripHeadsign, tripId } = vehicleWithTrip.trip;
+
       return {
-        color: `#${vehicleWithTrip.trip.color}`,
-        shortName: vehicleWithTrip.trip.shortName,
-        tripHeadsign: vehicleWithTrip.trip.tripHeadsign,
-        tripId: vehicleWithTrip.trip.tripId,
-        type: determineVehicleTypeFromColor(vehicleWithTrip.trip.color),
+        color: `#${color}`,
+        shortName,
+        tripHeadsign,
+        tripId,
+        type: determineTripTypeFromColor(vehicleWithTrip.trip.color),
       };
     });
+  },
+  getVehicleDetails: async (
+    vehicleId: string
+  ): Promise<VehicleDetails | undefined> => {
+    const { status, data } = await axios.get(
+      `${BASE_URL}/vehicle/${vehicleId}`
+    );
+
+    if (!data || data === "error!" || status !== 200) {
+      return undefined;
+    }
+
+    return data;
   },
 };

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
-import { VehicleIcon, VehicleType } from "../../common";
+import { TripType, VehicleIcon } from "../../common";
 
 type Props = {
-  vehicleType: VehicleType;
+  tripType: TripType;
 };
 
-export const MusicVisualizer = ({ vehicleType }: Props) => {
+export const MusicVisualizer = ({ tripType }: Props) => {
   const [rotationAnim] = useState(new Animated.Value(0));
 
   const startRotation = () => {
@@ -20,9 +20,9 @@ export const MusicVisualizer = ({ vehicleType }: Props) => {
     ).start();
   };
 
-  useEffect(() => {
-    startRotation();
-  });
+  // useEffect(() => {
+  //   startRotation();
+  // });
 
   const spin = rotationAnim.interpolate({
     inputRange: [0, 1],
@@ -40,7 +40,7 @@ export const MusicVisualizer = ({ vehicleType }: Props) => {
           ],
         }}
       >
-        <VehicleIcon type={vehicleType} size={150} />
+        <VehicleIcon type={tripType} size={150} />
       </Animated.View>
     </View>
   );

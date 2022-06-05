@@ -3,12 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomePage } from "./pages/home/HomePage";
 import { PlayerPage } from "./pages/player/PlayerPage";
-import { Vehicle } from "./common";
 import { StatusBar } from "react-native";
+import { Trip } from "./common";
 
 export type RootStackParamList = {
   Home: undefined;
-  Player: { vehicle: Vehicle };
+  Player: { trip: Trip };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

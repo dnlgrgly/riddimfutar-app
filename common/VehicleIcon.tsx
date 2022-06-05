@@ -1,12 +1,12 @@
 import React from "react";
-import { VehicleType } from "./Types";
+import { TripType } from "./Types";
 import Bus from "../assets/svg/bkk_bus.svg";
 import Tram from "../assets/svg/bkk_tram.svg";
 import Trolley from "../assets/svg/bkk_trolley.svg";
 import Night from "../assets/svg/bkk_night.svg";
 
 type Props = {
-  type: VehicleType;
+  type: TripType;
   size?: number;
 };
 

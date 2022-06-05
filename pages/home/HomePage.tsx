@@ -4,7 +4,7 @@ import Geolocation, {
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
-import { Colors, CommonStyles, Vehicle } from "../../common";
+import { Colors, CommonStyles, Trip } from "../../common";
 import Logo from "../../assets/svg/logo.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../../common/api";
@@ -41,8 +41,8 @@ export const HomePage = ({ navigation }: Props) => {
     setData(res ? res : "error");
   };
 
-  const onCardTap = (vehicle: Vehicle) => {
-    navigation.navigate("Player", { vehicle });
+  const onCardTap = (trip: Trip) => {
+    navigation.navigate("Player", { trip });
   };
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export const HomePage = ({ navigation }: Props) => {
         ) : (
           <></>
         )}
-        <VehicleList vehicles={data} onCardTap={onCardTap} />
+        <VehicleList nearbyVehicles={data} onCardTap={onCardTap} />
       </SafeAreaView>
     </ScrollView>
   );

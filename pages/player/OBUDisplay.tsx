@@ -1,56 +1,72 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, CommonStyles, Vehicle, VehicleIcon } from "../../common";
+import { Colors, CommonStyles, Trip, VehicleIcon } from "../../common";
 import Terminus from "../../assets/svg/terminus.svg";
 import Dot from "../../assets/svg/dot.svg";
 import DotBackground from "../../assets/svg/dot_background.svg";
 
 type Props = {
-  vehicle: Vehicle;
-  terminus: string;
-  nextStop: string;
+  trip: Trip;
+  terminus: string | undefined;
+  nextStop: string | undefined;
 };
 
-export const OBUDisplay = ({ vehicle, terminus, nextStop }: Props) => {
+export const OBUDisplay = ({ trip, terminus, nextStop }: Props) => {
   return (
     <>
       <SafeAreaView edges={["top", "left", "right"]} style={styles.container}>
         <View style={styles.vehicleDataRow}>
-          <VehicleIcon type={vehicle.type} size={35} />
+          <VehicleIcon type={trip.type} size={35} />
           <View
             style={[
               styles.vehicleShortNameBox,
-              { backgroundColor: vehicle.color },
+              { backgroundColor: trip.color },
             ]}
           >
             <Text
               style={[
                 styles.vehicleShortNameText,
-                { color: vehicle.type === "TRAM" ? "black" : "white" },
+                { color: trip.type === "TRAM" ? "black" : "white" },
               ]}
             >
-              {vehicle.shortName}
+              {trip.shortName}
             </Text>
           </View>
         </View>
         <View style={styles.terminusRow}>
           <View style={styles.terminusIconColumn}>
-            <Terminus width={35} color={vehicle.color} />
+            <Terminus width={35} color={trip.color} />
             <View
               style={[
                 styles.terminusLineExpander,
-                { backgroundColor: vehicle.color },
+                { backgroundColor: trip.color },
               ]}
             />
           </View>
-          <Text style={styles.stopName}>{terminus}</Text>
+          {terminus ? (
+            <Text style={styles.stopName}>{terminus}</Text>
+          ) : (
+            <ActivityIndicator
+              size={"small"}
+              color="white"
+              style={styles.stopName}
+            />
+          )}
         </View>
       </SafeAreaView>
       <View style={styles.nextStopRow}>
-        <DotBackground width={35} color={vehicle.color} />
+        <DotBackground width={35} color={trip.color} />
         <Dot width={15} height={15} style={styles.dot} />
-        <Text style={[styles.stopName, styles.nextStopName]}>{nextStop}</Text>
+        {nextStop ? (
+          <Text style={[styles.stopName, styles.nextStopName]}>{nextStop}</Text>
+        ) : (
+          <ActivityIndicator
+            size={"small"}
+            color="white"
+            style={[styles.stopName, styles.nextStopName]}
+          />
+        )}
       </View>
     </>
   );
