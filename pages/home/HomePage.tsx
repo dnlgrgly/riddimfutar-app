@@ -63,12 +63,16 @@ export const HomePage = ({ navigation }: Props) => {
       }
     >
       <SafeAreaView edges={["top", "left", "right"]}>
-        <View style={[CommonStyles.center, { marginBottom: 20 }]}>
+        <View style={[CommonStyles.center, { marginBottom: 15 }]}>
           <Logo height={60} width={266} />
         </View>
-        <View style={[CommonStyles.center, { marginBottom: 14 }]}>
-          <RollingText text={announcement} />
-        </View>
+        {announcement ? (
+          <View style={[CommonStyles.center, { marginBottom: 15 }]}>
+            <RollingText text={announcement} />
+          </View>
+        ) : (
+          <></>
+        )}
         <VehicleList vehicles={data} onCardTap={onCardTap} />
       </SafeAreaView>
     </ScrollView>

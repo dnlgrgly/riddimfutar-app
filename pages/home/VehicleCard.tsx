@@ -19,7 +19,7 @@ export const VehicleCard = ({ vehicle, onCardTap }: Props) => {
       onTouchEnd={onTouchEnd}
       style={[styles.cardContainer, { borderColor: vehicle.color }]}
     >
-      <VehicleIcon vehicle={vehicle} />
+      <VehicleIcon type={vehicle.type} />
       <Text style={styles.cardText}>
         {`${vehicle.shortName} ▶️ ${vehicle.tripHeadsign}`}
       </Text>

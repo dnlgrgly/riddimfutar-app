@@ -17,7 +17,7 @@ export const OBUDisplay = ({ vehicle, terminus, nextStop }: Props) => {
     <>
       <SafeAreaView edges={["top", "left", "right"]} style={styles.container}>
         <View style={styles.vehicleDataRow}>
-          <VehicleIcon vehicle={vehicle} size={35} />
+          <VehicleIcon type={vehicle.type} size={35} />
           <View
             style={[
               styles.vehicleShortNameBox,

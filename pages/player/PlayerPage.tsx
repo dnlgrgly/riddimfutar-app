@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RootStackParamList } from "../../App";
 import { Colors } from "../../common";
+import { MusicVisualizer } from "./MusicVisualizer";
 import { OBUDisplay } from "./OBUDisplay";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Player">;
@@ -17,6 +18,7 @@ export const PlayerPage = ({ route }: Props) => {
         terminus={vehicle.tripHeadsign}
         nextStop={vehicle.tripHeadsign}
       />
+      <MusicVisualizer vehicleType={vehicle.type} />
     </View>
   );
 };

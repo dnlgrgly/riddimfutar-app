@@ -1,17 +1,17 @@
 import React from "react";
-import { Vehicle } from "./Types";
+import { VehicleType } from "./Types";
 import Bus from "../assets/svg/bkk_bus.svg";
 import Tram from "../assets/svg/bkk_tram.svg";
 import Trolley from "../assets/svg/bkk_trolley.svg";
 import Night from "../assets/svg/bkk_night.svg";
 
 type Props = {
-  vehicle: Vehicle;
+  type: VehicleType;
   size?: number;
 };
 
-export const VehicleIcon = ({ vehicle, size = 30 }: Props) => {
-  switch (vehicle.type) {
+export const VehicleIcon = ({ type, size = 30 }: Props) => {
+  switch (type) {
     case "BUS":
       return <Bus width={size} height={size} />;
     case "TRAM":
