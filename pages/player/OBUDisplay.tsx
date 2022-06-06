@@ -2,9 +2,9 @@ import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, CommonStyles, Trip, VehicleIcon } from "../../common";
-import Terminus from "../../assets/svg/terminus.svg";
-import Dot from "../../assets/svg/dot.svg";
-import DotBackground from "../../assets/svg/dot_background.svg";
+import Terminus from "../../assets/images/terminus.svg";
+import Dot from "../../assets/images/dot.svg";
+import DotBackground from "../../assets/images/dot_background.svg";
 
 type Props = {
   trip: Trip;

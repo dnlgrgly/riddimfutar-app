@@ -1,10 +1,18 @@
 import Geolocation from "@react-native-community/geolocation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Sound from "react-native-sound";
 import { RootStackParamList } from "../../App";
-import { API, Stop, Trip } from "../../common";
+import { API, Fonts, Stop, Trip, Colors } from "../../common";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -54,6 +62,7 @@ export const AudioPlayer = ({
   let nextStopIndex = -1;
   let stops: Stop[];
   let preloadedMusic: Sound[];
+  const [artist, setArtist] = useState<string>();
 
   const quitWithMessage = (message: string) => {
     console.error(message);
@@ -119,14 +128,12 @@ export const AudioPlayer = ({
       `https://storage.googleapis.com/futar/${stops[nextStopIndex].fileName}`
     );
 
+    setArtist(music.artist);
+
     setTimeout(() => {
       welcomeOnboard.play(() => {
         nextStop.play(() => {
-          stop1.play(async () => {
-            for (let i = 0; i < preloadedMusic.length - 1; i += 2) {
-              await crossfadePlayer(preloadedMusic[i], preloadedMusic[i + 1]);
-            }
-          });
+          stop1.play(async () => {});
         });
       });
     }, 1000);
@@ -163,5 +170,52 @@ export const AudioPlayer = ({
     initFirstStop();
   }, []);
 
-  return <></>;
+  return (
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+      <Image
+        source={require("../../assets/images/artist.png")}
+        resizeMode="contain"
+        style={{ width: "100%" }}
+      />
+      <View style={styles.absoluteContainer}>
+        <Text
+          style={{
+            fontFamily: Fonts.brand,
+            fontSize: 18,
+            color: trip.color,
+          }}
+        >
+          Jelenlegi DJ:
+        </Text>
+        {artist ? (
+          <Text
+            style={{
+              fontFamily: Fonts.uiBold,
+              color: Colors.white,
+              fontSize: 24,
+              textAlign: "center",
+            }}
+          >
+            {artist}
+          </Text>
+        ) : (
+          <ActivityIndicator color={"white"} />
+        )}
+      </View>
+    </SafeAreaView>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: "center",
+    marginBottom: 30,
+    width: "100%",
+  },
+  absoluteContainer: {
+    position: "absolute",
+    top: -12.5,
+    left: 40,
+    right: 40,
+  },
+});

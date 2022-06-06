@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
 import { Colors, CommonStyles, Trip } from "../../common";
-import Logo from "../../assets/svg/logo.svg";
+import Logo from "../../assets/images/logo.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../../common/api";
 import { VehicleList, VehiclesState } from "./VehicleList";

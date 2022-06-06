@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { CommonStyles } from "../../common";
-import NoVehicles from "../../assets/svg/no_vehicles.svg";
 
 export const ErrorText = () => {
   return (
     <View style={styles.container}>
-      <NoVehicles height={150} />
+      <Image source={require("../../assets/images/no_vehicles.png")} />
       <Text style={[CommonStyles.heading, styles.heading]}>
         Hiba történt :(
       </Text>

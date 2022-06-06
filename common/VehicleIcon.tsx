@@ -1,9 +1,9 @@
 import React from "react";
 import { TripType } from "./Types";
-import Bus from "../assets/svg/bkk_bus.svg";
-import Tram from "../assets/svg/bkk_tram.svg";
-import Trolley from "../assets/svg/bkk_trolley.svg";
-import Night from "../assets/svg/bkk_night.svg";
+import Bus from "../assets/images/bkk_bus.svg";
+import Tram from "../assets/images/bkk_tram.svg";
+import Trolley from "../assets/images/bkk_trolley.svg";
+import Night from "../assets/images/bkk_night.svg";
 
 type Props = {
   type: TripType;
