@@ -1,3 +1,5 @@
+import Sound from "react-native-sound";
+
 export type TripType = "BUS" | "TRAM" | "TROLLEY" | "NIGHT";
 
 export type Trip = {
@@ -9,7 +11,7 @@ export type Trip = {
 };
 
 export type Stop = {
-  fileURL: string;
+  sound: Sound;
   lat: number;
   lon: number;
   musicOverride?: string;
@@ -47,7 +49,7 @@ export type MusicFile = {
   announceUnder: boolean;
   breakpoint: number;
   loopable: boolean;
-  fileURL: string;
+  sound: Sound;
   waveform: WaveformData;
 };
 

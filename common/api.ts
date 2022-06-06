@@ -1,4 +1,5 @@
 import axios from "axios";
+import Sound from "react-native-sound";
 import { MusicResponse, Trip, TripType, VehicleDetails } from "./Types";
 
 // const BASE_URL = "https://riddimfutar.ey.r.appspot.com/api/v1";
@@ -59,7 +60,9 @@ export const API = {
       stops: stops.map((stop: any) => {
         return {
           ...stop,
-          fileURL: `https://storage.googleapis.com/futar/${stop.fileName}`,
+          sound: new Sound(
+            `https://storage.googleapis.com/futar/${stop.fileName}`
+          ),
         };
       }),
     };
@@ -83,7 +86,7 @@ export const API = {
 
         return {
           ...file,
-          fileURL: file.pathURL,
+          sound: new Sound(file.pathURL),
           waveform: {
             ...file.waveform,
             sampleRate: sample_rate,

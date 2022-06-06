@@ -41,3 +41,7 @@ export const calculateProgress = (
 
   return (distanceFromPreviousStop / totalDistance) * 100;
 };
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

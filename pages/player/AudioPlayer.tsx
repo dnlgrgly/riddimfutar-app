@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import Sound from "react-native-sound";
 import { RootStackParamList } from "../../App";
-import { API, Fonts, Stop, Trip, Colors } from "../../common";
+import { API, Fonts, Stop, Trip, Colors, MusicFile } from "../../common";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { calculateProgress } from "./utils";
+import { calculateProgress, sleep } from "./utils";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -36,8 +36,7 @@ export const AudioPlayer = ({
   const [artist, setArtist] = useState<string>();
 
   let playingQueue: Sound[] = [];
-  let preloadedMusic: Sound[];
-  let stopAnnouncements: Sound[];
+  let music: MusicFile[];
 
   const welcomeOnboardAudio = new Sound(
     "https://storage.googleapis.com/futar/EF-udv.mp3"
@@ -85,25 +84,16 @@ export const AudioPlayer = ({
     nextStopIndex = sequence;
     progress = vehicle.stopDistancePercent;
 
+    setNextStop(stops[nextStopIndex].name);
     setTerminus(stops[stops.length - 1].name);
-
-    stopAnnouncements = stops.map((stop) => new Sound(stop.fileURL));
-
-    startListeningForLocation();
 
     playingQueue.push(welcomeOnboardAudio);
 
-    fetchMusic();
+    startListeningForLocation();
 
-    kickoffPlayback();
-  };
+    await fetchMusic();
 
-  const kickoffPlayback = () => {
-    setNextStop(stops[nextStopIndex].name);
-
-    playingQueue.push(nextStopAudio);
-    playingQueue.push(stopAnnouncements[nextStopIndex]);
-
+    await sleep(500);
     shiftQueue();
   };
 
@@ -125,21 +115,16 @@ export const AudioPlayer = ({
   };
 
   const fetchMusic = async () => {
-    const music = await API.getMusic();
+    const musicResponse = await API.getMusic();
 
-    if (!music) {
+    if (!musicResponse) {
       return quitWithMessage(
         "Hiba lépett fel a zene betöltése közben. Próbáld újra!"
       );
     }
 
-    preloadedMusic = music.files.map((file) => new Sound(file.fileURL));
-
-    setArtist(music.artist);
-
-    playingQueue.push(...preloadedMusic.slice(0, preloadedMusic.length - 1));
-    playingQueue.push(stopAnnouncements[nextStopIndex]);
-    playingQueue.push(preloadedMusic[preloadedMusic.length - 1]);
+    music = musicResponse.files;
+    setArtist(musicResponse.artist);
   };
 
   const startListeningForLocation = async () => {
