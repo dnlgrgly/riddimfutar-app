@@ -36,7 +36,7 @@ export const AudioPlayer = ({
   const [artist, setArtist] = useState<string>();
 
   let playingQueue: Sound[] = [];
-  let music: MusicFile[];
+  let musicFiles: MusicFile[];
 
   const welcomeOnboardAudio = new Sound(
     "https://storage.googleapis.com/futar/EF-udv.mp3"
@@ -72,8 +72,8 @@ export const AudioPlayer = ({
 
     // if vehicle is already approaching terminus when opening, we can't provide a good UX
     if (
-      sequence > stopData.length ||
-      (sequence == stopData.length && vehicle.stopDistancePercent > 60)
+      sequence > stopData.length - 1 ||
+      (sequence == stopData.length - 1 && vehicle.stopDistancePercent > 60)
     ) {
       return quitWithMessage(
         "A járat túl közel van a végállomáshoz. Legközelebb próbáld hamarabb elindítani a RIDIDMFUTÁRT!"
@@ -104,12 +104,27 @@ export const AudioPlayer = ({
     shiftQueue();
   };
 
+  const determineNextSound = (): Sound | undefined => {
+    const shifted = playingQueue.shift();
+
+    if (shifted) {
+      return shifted;
+    }
+
+    // TODO:
+    // if progress is high enough to play next sound
+    //  if progress is high enough, announce stop
+    //    if nextstop is terminus, add terminus + goodbye signal
+    // if no, check if sound is loopable - if no, play next
+
+    return musicFiles[0].sound.setNumberOfLoops(-1);
+  };
+
   const shiftQueue = () => {
-    const audio = playingQueue.shift();
+    let audio = determineNextSound();
 
     if (!audio) {
-      // TODO: handle gracefully - there may be cases when we don't need to quit
-      return quitWithMessage("Ennyi volt!");
+      return quitWithMessage("Viszontlátásra!");
     }
 
     const length = Math.ceil(audio.getDuration() * 1000);
@@ -130,7 +145,7 @@ export const AudioPlayer = ({
       );
     }
 
-    music = musicResponse.files;
+    musicFiles = musicResponse.files;
     setArtist(musicResponse.artist);
   };
 
