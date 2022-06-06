@@ -13,41 +13,13 @@ import Sound from "react-native-sound";
 import { RootStackParamList } from "../../App";
 import { API, Fonts, Stop, Trip, Colors } from "../../common";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { calculateProgress } from "./utils";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList>;
   trip: Trip;
   setNextStop: (name: string) => void;
   setTerminus: (name: string) => void;
-};
-
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  var p = 0.017453292519943295;
-  var c = Math.cos;
-  var a =
-    0.5 -
-    c((lat2 - lat1) * p) / 2 +
-    (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
-  return 12742 * Math.asin(Math.sqrt(a));
-};
-
-// const networkSoundWrapper =
-
-const crossfadePlayer = async (sound: Sound, nextSound: Sound) => {
-  const length = sound.getDuration() * 1000;
-
-  sound.play();
-
-  return setTimeout(() => {
-    nextSound.play(() => {
-      return Promise.resolve();
-    });
-  }, length - 10);
 };
 
 export const AudioPlayer = ({
@@ -61,8 +33,21 @@ export const AudioPlayer = ({
   // index of next stop
   let nextStopIndex = -1;
   let stops: Stop[];
-  let preloadedMusic: Sound[];
   const [artist, setArtist] = useState<string>();
+
+  let playingQueue: Sound[] = [];
+  let preloadedMusic: Sound[];
+  let stopAnnouncements: Sound[];
+
+  const welcomeOnboardAudio = new Sound(
+    "https://storage.googleapis.com/futar/EF-udv.mp3"
+  );
+  const nextStopAudio = new Sound(
+    "https://storage.googleapis.com/futar/EF-kov.mp3"
+  );
+  const terminusAudio = new Sound(
+    "https://storage.googleapis.com/futar/EF-veg.mp3"
+  );
 
   const quitWithMessage = (message: string) => {
     console.error(message);
@@ -100,11 +85,43 @@ export const AudioPlayer = ({
     nextStopIndex = sequence;
     progress = vehicle.stopDistancePercent;
 
-    setNextStop(stops[nextStopIndex].name);
     setTerminus(stops[stops.length - 1].name);
 
-    fetchMusic();
+    stopAnnouncements = stops.map((stop) => new Sound(stop.fileURL));
+
     startListeningForLocation();
+
+    playingQueue.push(welcomeOnboardAudio);
+
+    fetchMusic();
+
+    kickoffPlayback();
+  };
+
+  const kickoffPlayback = () => {
+    setNextStop(stops[nextStopIndex].name);
+
+    playingQueue.push(nextStopAudio);
+    playingQueue.push(stopAnnouncements[nextStopIndex]);
+
+    shiftQueue();
+  };
+
+  const shiftQueue = () => {
+    const audio = playingQueue.shift();
+
+    if (!audio) {
+      // TODO: handle gracefully - there may be cases when we don't need to quit
+      return quitWithMessage("Ennyi volt!");
+    }
+
+    const length = Math.ceil(audio.getDuration() * 1000);
+
+    audio.play();
+
+    setTimeout(() => {
+      shiftQueue();
+    }, length - 7.5);
   };
 
   const fetchMusic = async () => {
@@ -116,53 +133,21 @@ export const AudioPlayer = ({
       );
     }
 
-    preloadedMusic = music.files.map((file) => new Sound(file.pathURL));
-
-    const welcomeOnboard = new Sound(
-      "https://storage.googleapis.com/futar/EF-udv.mp3"
-    );
-    const nextStop = new Sound(
-      "https://storage.googleapis.com/futar/EF-kov.mp3"
-    );
-    const stop1 = new Sound(
-      `https://storage.googleapis.com/futar/${stops[nextStopIndex].fileName}`
-    );
+    preloadedMusic = music.files.map((file) => new Sound(file.fileURL));
 
     setArtist(music.artist);
 
-    setTimeout(() => {
-      welcomeOnboard.play(() => {
-        nextStop.play(() => {
-          stop1.play(async () => {});
-        });
-      });
-    }, 1000);
+    playingQueue.push(...preloadedMusic.slice(0, preloadedMusic.length - 1));
+    playingQueue.push(stopAnnouncements[nextStopIndex]);
+    playingQueue.push(preloadedMusic[preloadedMusic.length - 1]);
   };
 
   const startListeningForLocation = async () => {
     Geolocation.watchPosition((item) => {
-      const { latitude, longitude } = item.coords;
-
       const previousStop = stops[nextStopIndex - 1];
       const nextStop = stops[nextStopIndex];
 
-      const distanceFromPreviousStop = calculateDistance(
-        latitude,
-        longitude,
-        previousStop.lat,
-        previousStop.lon
-      );
-
-      const distanceUntilNextStop = calculateDistance(
-        latitude,
-        longitude,
-        nextStop.lat,
-        nextStop.lon
-      );
-
-      const totalDistance = distanceFromPreviousStop + distanceUntilNextStop;
-
-      progress = (distanceFromPreviousStop / totalDistance) * 100;
+      progress = calculateProgress(item, previousStop, nextStop);
     });
   };
 

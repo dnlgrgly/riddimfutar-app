@@ -32,13 +32,11 @@ export const API = {
     }
 
     return data.map((vehicleWithTrip: any) => {
-      const { color, shortName, tripHeadsign, tripId } = vehicleWithTrip.trip;
+      const { color } = vehicleWithTrip.trip;
 
       return {
+        ...vehicleWithTrip.trip,
         color: `#${color}`,
-        shortName,
-        tripHeadsign,
-        tripId,
         type: determineTripTypeFromColor(vehicleWithTrip.trip.color),
       };
     });
@@ -54,7 +52,17 @@ export const API = {
       return undefined;
     }
 
-    return data;
+    const { stops } = data;
+
+    return {
+      ...data,
+      stops: stops.map((stop: any) => {
+        return {
+          ...stop,
+          fileURL: `https://storage.googleapis.com/futar/${stop.fileName}`,
+        };
+      }),
+    };
   },
   getMusic: async (
     genre: string = "riddim"
@@ -71,26 +79,15 @@ export const API = {
       artist,
       title,
       files: files.map((file: any) => {
-        const {
-          bits,
-          channels,
-          data,
-          length,
-          sample_rate,
-          samples_per_pixel,
-          version,
-        } = file.waveform;
+        const { sample_rate, samples_per_pixel } = file.waveform;
 
         return {
           ...file,
+          fileURL: file.pathURL,
           waveform: {
-            bits,
-            channels,
-            data,
-            length,
+            ...file.waveform,
             sampleRate: sample_rate,
             samplesPerPixel: samples_per_pixel,
-            version,
           },
         };
       }),

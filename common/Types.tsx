@@ -9,7 +9,7 @@ export type Trip = {
 };
 
 export type Stop = {
-  fileName: string;
+  fileURL: string;
   lat: number;
   lon: number;
   musicOverride?: string;
@@ -47,7 +47,7 @@ export type MusicFile = {
   announceUnder: boolean;
   breakpoint: number;
   loopable: boolean;
-  pathURL: string;
+  fileURL: string;
   waveform: WaveformData;
 };
 
