@@ -16,14 +16,14 @@ export const PlayerPage = ({ navigation, route }: Props) => {
 
   return (
     <View style={styles.container}>
+      <OBUDisplay trip={trip} nextStop={nextStop} terminus={terminus} />
+      <MusicVisualizer tripType={trip.type} />
       <AudioPlayer
         navigation={navigation}
         trip={trip}
         setNextStop={setNextStop}
         setTerminus={setTerminus}
       />
-      <OBUDisplay trip={trip} nextStop={nextStop} terminus={terminus} />
-      <MusicVisualizer tripType={trip.type} />
     </View>
   );
 };

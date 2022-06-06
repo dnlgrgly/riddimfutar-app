@@ -20,9 +20,9 @@ export const MusicVisualizer = ({ tripType }: Props) => {
     ).start();
   };
 
-  useEffect(() => {
-    startRotation();
-  });
+  // useEffect(() => {
+  //   startRotation();
+  // });
 
   const spin = rotationAnim.interpolate({
     inputRange: [0, 1],

@@ -32,3 +32,27 @@ export type VehicleDetails = {
   trip: Partial<Trip>;
   vehicle: Vehicle;
 };
+
+export type WaveformData = {
+  bits: number;
+  channels: number;
+  data: number[];
+  length: number;
+  sampleRate: number;
+  samplesPerPixel: number;
+  version: number;
+};
+
+export type MusicFile = {
+  announceUnder: boolean;
+  breakpoint: number;
+  loopable: boolean;
+  pathURL: string;
+  waveform: WaveformData;
+};
+
+export type MusicResponse = {
+  artist: string;
+  title: string;
+  files: MusicFile[];
+};

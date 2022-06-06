@@ -13,7 +13,20 @@ type Props = {
   setTerminus: (name: string) => void;
 };
 
-const calculateDistance = () => {};
+const calculateDistance = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number => {
+  var p = 0.017453292519943295;
+  var c = Math.cos;
+  var a =
+    0.5 -
+    c((lat2 - lat1) * p) / 2 +
+    (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
+  return 12742 * Math.asin(Math.sqrt(a));
+};
 
 // const networkSoundWrapper =
 
@@ -22,7 +35,7 @@ const crossfadePlayer = async (sound: Sound, nextSound: Sound) => {
 
   sound.play();
 
-  setTimeout(() => {
+  return setTimeout(() => {
     nextSound.play(() => {
       return Promise.resolve();
     });
@@ -40,15 +53,19 @@ export const AudioPlayer = ({
   // index of next stop
   let nextStopIndex = -1;
   let stops: Stop[];
+  let preloadedMusic: Sound[];
+
+  const quitWithMessage = (message: string) => {
+    console.error(message);
+    Alert.alert(message);
+    navigation.goBack();
+  };
 
   const initFirstStop = async () => {
     const vehicleDetails = await API.getVehicleDetails(trip.tripId);
 
     if (!vehicleDetails) {
-      console.error("AudioPlayer - getVehicleDetails returned null!");
-      Alert.alert("Hiba lépett fel a járatadatok betöltése közben!");
-      navigation.goBack();
-      return;
+      return quitWithMessage("Hiba lépett fel a járatadatok betöltése közben!");
     }
 
     const { stops: stopData, vehicle } = vehicleDetails;
@@ -65,11 +82,9 @@ export const AudioPlayer = ({
       sequence > stopData.length ||
       (sequence == stopData.length && vehicle.stopDistancePercent > 60)
     ) {
-      Alert.alert(
+      return quitWithMessage(
         "A járat túl közel van a végállomáshoz. Legközelebb próbáld hamarabb elindítani a RIDIDMFUTÁRT!"
       );
-      navigation.goBack();
-      return;
     }
 
     stops = stopData;
@@ -79,10 +94,21 @@ export const AudioPlayer = ({
     setNextStop(stops[nextStopIndex].name);
     setTerminus(stops[stops.length - 1].name);
 
-    playWelcomeSignal();
+    fetchMusic();
+    startListeningForLocation();
   };
 
-  const playWelcomeSignal = () => {
+  const fetchMusic = async () => {
+    const music = await API.getMusic();
+
+    if (!music) {
+      return quitWithMessage(
+        "Hiba lépett fel a zene betöltése közben. Próbáld újra!"
+      );
+    }
+
+    preloadedMusic = music.files.map((file) => new Sound(file.pathURL));
+
     const welcomeOnboard = new Sound(
       "https://storage.googleapis.com/futar/EF-udv.mp3"
     );
@@ -92,39 +118,14 @@ export const AudioPlayer = ({
     const stop1 = new Sound(
       `https://storage.googleapis.com/futar/${stops[nextStopIndex].fileName}`
     );
-    const sound0 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/0.mp3`
-    );
-    const sound1 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/1.mp3`
-    );
-    const sound2 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/2.mp3`
-    );
-    const sound3 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/3.mp3`
-    );
-    const sound4 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/4.mp3`
-    );
-    const sound5 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/5.mp3`
-    );
-    const sound6 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/6.mp3`
-    );
-    const sound7 = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/7.mp3`
-    );
-    const drop = new Sound(
-      `https://storage.googleapis.com/riddim/riddim/decadonlikethat/drop.mp3`
-    );
 
     setTimeout(() => {
       welcomeOnboard.play(() => {
         nextStop.play(() => {
-          stop1.play(() => {
-            crossfadePlayer(sound3, sound4);
+          stop1.play(async () => {
+            for (let i = 0; i < preloadedMusic.length - 1; i += 2) {
+              await crossfadePlayer(preloadedMusic[i], preloadedMusic[i + 1]);
+            }
           });
         });
       });
@@ -132,12 +133,34 @@ export const AudioPlayer = ({
   };
 
   const startListeningForLocation = async () => {
-    Geolocation.watchPosition((item) => {});
+    Geolocation.watchPosition((item) => {
+      const { latitude, longitude } = item.coords;
+
+      const previousStop = stops[nextStopIndex - 1];
+      const nextStop = stops[nextStopIndex];
+
+      const distanceFromPreviousStop = calculateDistance(
+        latitude,
+        longitude,
+        previousStop.lat,
+        previousStop.lon
+      );
+
+      const distanceUntilNextStop = calculateDistance(
+        latitude,
+        longitude,
+        nextStop.lat,
+        nextStop.lon
+      );
+
+      const totalDistance = distanceFromPreviousStop + distanceUntilNextStop;
+
+      progress = (distanceFromPreviousStop / totalDistance) * 100;
+    });
   };
 
   useEffect(() => {
     initFirstStop();
-    startListeningForLocation();
   }, []);
 
   return <></>;
