@@ -87,13 +87,20 @@ export const AudioPlayer = ({
     setNextStop(stops[nextStopIndex].name);
     setTerminus(stops[stops.length - 1].name);
 
-    playingQueue.push(welcomeOnboardAudio);
-
     startListeningForLocation();
 
     await fetchMusic();
 
     await sleep(500);
+
+    kickoffAudioPlayback();
+  };
+
+  const kickoffAudioPlayback = () => {
+    playingQueue.push(welcomeOnboardAudio);
+    playingQueue.push(nextStopAudio);
+    playingQueue.push(stops[nextStopIndex].sound);
+
     shiftQueue();
   };
 

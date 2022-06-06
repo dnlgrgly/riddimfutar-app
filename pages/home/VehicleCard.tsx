@@ -1,5 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Colors, CommonStyles, Trip, VehicleIcon } from "../../common";
 
 export type VehiclesState = Trip[] | "error" | undefined;
@@ -10,20 +11,20 @@ type Props = {
 };
 
 export const VehicleCard = ({ trip, onCardTap }: Props) => {
-  const onTouchEnd = () => {
+  const onPress = () => {
     onCardTap(trip);
   };
 
   return (
-    <Pressable
-      onTouchEnd={onTouchEnd}
+    <TouchableOpacity
+      onPress={onPress}
       style={[styles.cardContainer, { borderColor: trip.color }]}
     >
       <VehicleIcon type={trip.type} />
       <Text style={styles.cardText}>
         {`${trip.shortName} ▶️ ${trip.tripHeadsign}`}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
