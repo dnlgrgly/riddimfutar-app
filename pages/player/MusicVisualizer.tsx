@@ -13,7 +13,7 @@ export const MusicVisualizer = ({ tripType }: Props) => {
     Animated.loop(
       Animated.timing(rotationAnim, {
         toValue: 1,
-        duration: 2000,
+        duration: 1750,
         useNativeDriver: true,
         easing: Easing.linear,
       })
