@@ -20,22 +20,51 @@ export const MusicVisualizer = ({ tripType }: Props) => {
     ).start();
   };
 
-  // useEffect(() => {
-  //   startRotation();
-  // });
+  useEffect(() => {
+    startRotation();
+  }, []);
 
   const spin = rotationAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
+  });
+  const reversesSpin = rotationAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["-180deg", "180deg"],
   });
 
   return (
     <View style={styles.container}>
       <Animated.View
         style={{
+          position: "absolute",
           transform: [
             {
+              rotateX: spin,
+            },
+            {
+              rotateY: spin,
+            },
+            {
               rotateZ: spin,
+            },
+          ],
+        }}
+      >
+        <VehicleIcon type={tripType} size={150} />
+      </Animated.View>
+      <Animated.View
+        style={{
+          position: "absolute",
+          transform: [
+            {
+              rotateX: reversesSpin,
+            },
+            {
+              rotateY: reversesSpin,
+            },
+            {
+              rotateZ: reversesSpin,
             },
           ],
         }}
