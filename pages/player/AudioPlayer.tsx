@@ -1,4 +1,6 @@
-import Geolocation from "@react-native-community/geolocation";
+import Geolocation, {
+  GeolocationResponse,
+} from "@react-native-community/geolocation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import {
@@ -35,6 +37,8 @@ export const AudioPlayer = ({
   let stops: Stop[];
   const [artist, setArtist] = useState<string>();
 
+  let playingMusicIndex = Number.MAX_VALUE;
+  let skippedStop = false;
   let playingQueue: Sound[] = [];
   let musicFiles: MusicFile[];
 
@@ -46,6 +50,9 @@ export const AudioPlayer = ({
   );
   const terminusAudio = new Sound(
     "https://storage.googleapis.com/futar/EF-veg.mp3"
+  );
+  const goodbyeAudio = new Sound(
+    "https://storage.googleapis.com/futar/EF-visz.mp3"
   );
 
   const quitWithMessage = (message: string) => {
@@ -63,11 +70,14 @@ export const AudioPlayer = ({
 
     const { stops: stopData, vehicle } = vehicleDetails;
 
+    // FUTÁR doesn't provide stopSequence data when vehicle is approaching terminus
+    let sequence = vehicle.stopSequence ?? stopData.length - 1;
+
     // if vehicle is too close to the next stop when beginning the play,
     // skip that stop
-    let sequence = vehicle.stopSequence;
     if (vehicle.stopDistancePercent > 90) {
       sequence++;
+      skippedStop = true;
     }
 
     // if vehicle is already approaching terminus when opening, we can't provide a good UX
@@ -87,21 +97,51 @@ export const AudioPlayer = ({
     setNextStop(stops[nextStopIndex].name);
     setTerminus(stops[stops.length - 1].name);
 
+    updateProgress();
     startListeningForLocation();
 
     await fetchMusic();
 
-    await sleep(500);
+    await sleep(1000);
 
     kickoffAudioPlayback();
   };
 
   const kickoffAudioPlayback = () => {
     playingQueue.push(welcomeOnboardAudio);
+    announceStop();
+    shiftQueue();
+  };
+
+  const announceStop = () => {
     playingQueue.push(nextStopAudio);
     playingQueue.push(stops[nextStopIndex].sound);
 
-    shiftQueue();
+    if (nextStopIndex === stops.length - 1) {
+      playingQueue.push(terminusAudio);
+    }
+  };
+
+  const updateNextStop = () => {
+    nextStopIndex++;
+
+    if (nextStopIndex > stops.length - 1) {
+      playingQueue.push(terminusAudio);
+      playingQueue.push(goodbyeAudio);
+      return quitWithMessage("Végállomás. Viszontlátásra!");
+    }
+
+    announceStop();
+
+    fetchMusic();
+
+    progress = -1;
+    skippedStop = false;
+    playingMusicIndex = Number.MAX_VALUE;
+
+    setTimeout(() => {
+      setNextStop(stops[nextStopIndex].name);
+    }, 500);
   };
 
   const determineNextSound = (): Sound | undefined => {
@@ -111,20 +151,45 @@ export const AudioPlayer = ({
       return shifted;
     }
 
-    // TODO:
-    // if progress is high enough to play next sound
-    //  if progress is high enough, announce stop
-    //    if nextstop is terminus, add terminus + goodbye signal
-    // if no, check if sound is loopable - if no, play next
+    if (nextStopIndex > stops.length - 1) {
+      return undefined;
+    }
 
-    return musicFiles[0].sound.setNumberOfLoops(-1);
+    const progressIndex = musicFiles.findIndex(
+      (item) => item.breakpoint - 5 <= progress
+    );
+
+    if (progressIndex < playingMusicIndex) {
+      if (musicFiles[playingMusicIndex]) {
+        musicFiles[playingMusicIndex].sound.stop();
+      }
+
+      playingMusicIndex = progressIndex;
+    }
+
+    // TODO: check if the music if loopable!
+
+    if (progress > 90 && playingQueue.length == 0) {
+      const next = stops[nextStopIndex].sound;
+      const drop = musicFiles[0].sound;
+
+      playingQueue.push(drop);
+
+      setTimeout(() => {
+        updateNextStop();
+      }, (next.getDuration() + drop.getDuration()) * 1000 - 500);
+
+      return next;
+    }
+
+    return musicFiles[playingMusicIndex].sound.setNumberOfLoops(-1);
   };
 
   const shiftQueue = () => {
     let audio = determineNextSound();
 
     if (!audio) {
-      return quitWithMessage("Viszontlátásra!");
+      return;
     }
 
     const length = Math.ceil(audio.getDuration() * 1000);
@@ -145,21 +210,32 @@ export const AudioPlayer = ({
       );
     }
 
-    musicFiles = musicResponse.files;
+    musicFiles = musicResponse.files.reverse();
     setArtist(musicResponse.artist);
   };
 
-  const startListeningForLocation = async () => {
-    Geolocation.watchPosition((item) => {
-      const previousStop = stops[nextStopIndex - 1];
-      const nextStop = stops[nextStopIndex];
+  const updateProgress = async (item?: GeolocationResponse) => {
+    const previousStop = stops[nextStopIndex - (skippedStop ? 2 : 1)];
+    const nextStop = stops[nextStopIndex];
 
+    if (!item) {
+      await Geolocation.getCurrentPosition((location) =>
+        updateProgress(location)
+      );
+    } else {
       progress = calculateProgress(item, previousStop, nextStop);
-    });
+      return;
+    }
+  };
+
+  const startListeningForLocation = async () => {
+    Geolocation.watchPosition(updateProgress);
   };
 
   useEffect(() => {
-    initFirstStop();
+    if (!stops) {
+      initFirstStop();
+    }
   }, []);
 
   return (
@@ -175,6 +251,10 @@ export const AudioPlayer = ({
             fontFamily: Fonts.brand,
             fontSize: 18,
             color: trip.color,
+            shadowColor: Colors.purpleLight,
+            shadowOpacity: 1,
+            shadowOffset: { width: 2, height: 2 },
+            shadowRadius: 0,
           }}
         >
           Jelenlegi DJ:

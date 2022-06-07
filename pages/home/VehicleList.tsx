@@ -14,7 +14,7 @@ type Props = {
 export const VehicleList = ({ nearbyVehicles, onCardTap }: Props) => {
   if (!nearbyVehicles) {
     return <></>;
-  } else if (nearbyVehicles === "error") {
+  } else if (nearbyVehicles === "error" || nearbyVehicles.length === 0) {
     return <ErrorText />;
   }
 
