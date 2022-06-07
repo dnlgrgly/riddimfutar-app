@@ -58,7 +58,8 @@ export type MusicFile = {
   breakpoint: number;
   loopable: boolean;
   sound: Sound;
-  waveform: WaveformData;
+  // TODO: once needed, re-add waveform data
+  // waveform: WaveformData;
 };
 
 export type MusicResponse = {

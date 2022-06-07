@@ -73,16 +73,17 @@ export const API = {
         artist,
         title,
         files: files.map((file: any) => {
-          const { sample_rate, samples_per_pixel } = file.waveform;
+          // TODO: once needed, re-add waveform data
+          // const { sample_rate, samples_per_pixel } = file.waveform;
 
           return {
             ...file,
             sound: new Sound(file.pathURL),
-            waveform: {
-              ...file.waveform,
-              sampleRate: sample_rate,
-              samplesPerPixel: samples_per_pixel,
-            },
+            // waveform: {
+            //   ...file.waveform,
+            //   sampleRate: sample_rate,
+            //   samplesPerPixel: samples_per_pixel,
+            // },
           };
         }),
       };
