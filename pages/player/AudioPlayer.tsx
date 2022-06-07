@@ -169,7 +169,10 @@ export const AudioPlayer = ({
 
     // TODO: check if the music if loopable!
 
-    if (progress > 90 && playingQueue.length == 0) {
+    if (
+      (progress > 90 && playingQueue.length == 0) ||
+      playingMusicIndex === 0
+    ) {
       const next = stops[nextStopIndex].sound;
       const drop = musicFiles[0].sound;
 
