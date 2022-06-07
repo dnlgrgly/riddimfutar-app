@@ -13,6 +13,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { RollingText } from "./RollingText";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
+import { isOutOfBounds } from "./utils";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -21,15 +22,34 @@ export const HomePage = ({ navigation }: Props) => {
   const [data, setData] = useState<VehiclesState>();
   const [loading, setLoading] = useState(true);
 
-  const onRefresh = async () => {
-    await getAnnouncement();
-    await Geolocation.getCurrentPosition(async (res) => await getList(res));
-    setLoading(false);
+  const onRefresh = () => {
+    setLoading(true);
+
+    Geolocation.getCurrentPosition(async (res) => {
+      await getAnnouncement(res);
+    });
   };
 
-  const getAnnouncement = async () => {
+  const getAnnouncement = async (position: GeolocationResponse) => {
     const res = await API.getMetadata();
-    setAnnouncement(res.data.message);
+
+    if (!res) {
+      setData("error");
+      setLoading(false);
+      return;
+    }
+
+    if (res.message) {
+      setAnnouncement(res.message);
+    }
+
+    if (isOutOfBounds(res, position)) {
+      setData("out-of-bounds");
+      setLoading(false);
+      return;
+    }
+
+    await getList(position);
   };
 
   const getList = async (position: GeolocationResponse) => {
@@ -39,6 +59,7 @@ export const HomePage = ({ navigation }: Props) => {
     );
 
     setData(res ? res : "error");
+    setLoading(false);
   };
 
   const onCardTap = (trip: Trip) => {
@@ -63,7 +84,7 @@ export const HomePage = ({ navigation }: Props) => {
       }
     >
       <SafeAreaView edges={["top", "left", "right"]}>
-        <View style={[CommonStyles.center, { marginBottom: 15 }]}>
+        <View style={[CommonStyles.center, { marginBottom: 20 }]}>
           <Logo height={60} width={266} />
         </View>
         {announcement ? (

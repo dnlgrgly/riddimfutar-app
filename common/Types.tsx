@@ -1,5 +1,13 @@
 import Sound from "react-native-sound";
 
+export type MetadataResponse = {
+  message?: string;
+  upperRightLatitude: number;
+  upperRightLongitude: number;
+  lowerLeftLatitude: number;
+  lowerLeftLongitude: number;
+};
+
 export type TripType = "BUS" | "TRAM" | "TROLLEY" | "NIGHT";
 
 export type Trip = {

@@ -4,7 +4,7 @@ import { CommonStyles, Trip } from "../../common";
 import { ErrorText } from "./ErrorText";
 import { VehicleCard } from "./VehicleCard";
 
-export type VehiclesState = Trip[] | "error" | undefined;
+export type VehiclesState = Trip[] | "out-of-bounds" | "error" | undefined;
 
 type Props = {
   nearbyVehicles: VehiclesState;
@@ -14,8 +14,23 @@ type Props = {
 export const VehicleList = ({ nearbyVehicles, onCardTap }: Props) => {
   if (!nearbyVehicles) {
     return <></>;
+  } else if (nearbyVehicles === "out-of-bounds") {
+    return (
+      <ErrorText
+        icon={require("../../assets/images/budapest.png")}
+        title="Irány vissza Budapest!"
+        body="A RIDDIMFUTÁR jelenleg csak a BKK szolgáltatási határain belül működik. Menj közelebb Budapesthez!"
+      />
+    );
   } else if (nearbyVehicles === "error" || nearbyVehicles.length === 0) {
-    return <ErrorText />;
+    return (
+      <ErrorText
+        icon={require("../../assets/images/no_vehicles.png")}
+        title="Hiba történt!"
+        body="Úgy néz ki, nincs a környékeden egy jármű sem ami szolgálatot teljesítene - vagy egyéb hiba történt."
+        italicBody="(pl. nincs interneted, vagy nem fértünk hozzá a helyzetedhez)"
+      />
+    );
   }
 
   return (

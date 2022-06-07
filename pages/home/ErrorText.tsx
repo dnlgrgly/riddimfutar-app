@@ -1,22 +1,34 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { CommonStyles } from "../../common";
+import {
+  Dimensions,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CommonStyles, Fonts } from "../../common";
 
-export const ErrorText = () => {
+type Props = {
+  icon: ImageSourcePropType;
+  title: string;
+  body: string;
+  italicBody?: string;
+};
+
+export const ErrorText = ({ icon, title, body, italicBody }: Props) => {
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/images/no_vehicles.png")} />
-      <Text style={[CommonStyles.heading, styles.heading]}>
-        Hiba történt :(
-      </Text>
-      <Text style={styles.textBody}>
-        Úgy néz ki, nincs a környékeden egy jármű sem ami szolgálatot
-        teljesítene - vagy egyéb hiba történt.
-      </Text>
-      <Text style={[styles.textBody, CommonStyles.textItalic]}>
-        (pl. nincs interneted, vagy nem fértünk hozzá a helyzetedhez).
-      </Text>
-    </View>
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+      <Image source={icon} />
+      <Text style={styles.heading}>{title}</Text>
+      <Text style={styles.textBody}>{body}</Text>
+      {italicBody && (
+        <Text style={[styles.textBody, CommonStyles.textItalic]}>
+          {italicBody}
+        </Text>
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -30,8 +42,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 14,
   },
   heading: {
+    ...CommonStyles.heading,
     ...CommonStyles.textCenter,
-    marginTop: 20,
+    fontFamily: Fonts.brand,
+    marginTop: 40,
     marginBottom: 10,
   },
   textBody: {

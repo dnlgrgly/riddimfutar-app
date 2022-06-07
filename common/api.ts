@@ -1,6 +1,12 @@
 import axios from "axios";
 import Sound from "react-native-sound";
-import { MusicResponse, Trip, TripType, VehicleDetails } from "./Types";
+import {
+  MetadataResponse,
+  MusicResponse,
+  Trip,
+  TripType,
+  VehicleDetails,
+} from "./Types";
 
 // const BASE_URL = "https://riddimfutar.ey.r.appspot.com/api/v1";
 const BASE_URL = "http://localhost:8080/api/v1";
@@ -19,81 +25,90 @@ const determineTripTypeFromColor = (input: string): TripType => {
 };
 
 export const API = {
-  getMetadata: async () => axios.get(`${BASE_URL}/metadata`),
+  getMetadata: async (): Promise<MetadataResponse | undefined> => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/metadata`);
+
+      return data;
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
+  },
   getNearbyVehicles: async (
     lat: number,
     lon: number
   ): Promise<Trip[] | undefined> => {
-    const { status, data } = await axios.get(
-      `${BASE_URL}/vehicles?lat=${lat}&lon=${lon}`
-    );
+    try {
+      const { data } = await axios.get(
+        `${BASE_URL}/vehicles?lat=${lat}&lon=${lon}`
+      );
 
-    if (!data || data === "error!" || status !== 200) {
+      return data.map((vehicleWithTrip: any) => {
+        const { color } = vehicleWithTrip.trip;
+
+        return {
+          ...vehicleWithTrip.trip,
+          color: `#${color}`,
+          type: determineTripTypeFromColor(vehicleWithTrip.trip.color),
+        };
+      });
+    } catch (e) {
+      console.error(e);
       return undefined;
     }
-
-    return data.map((vehicleWithTrip: any) => {
-      const { color } = vehicleWithTrip.trip;
-
-      return {
-        ...vehicleWithTrip.trip,
-        color: `#${color}`,
-        type: determineTripTypeFromColor(vehicleWithTrip.trip.color),
-      };
-    });
   },
   getVehicleDetails: async (
     vehicleId: string
   ): Promise<VehicleDetails | undefined> => {
-    const { status, data } = await axios.get(
-      `${BASE_URL}/vehicle/${vehicleId}`
-    );
+    try {
+      const { data } = await axios.get(`${BASE_URL}/vehicle/${vehicleId}`);
 
-    if (!data || data === "error!" || status !== 200) {
+      const { stops } = data;
+
+      return {
+        ...data,
+        stops: stops.map((stop: any) => {
+          return {
+            ...stop,
+            sound: new Sound(
+              `https://storage.googleapis.com/futar/${stop.fileName}`
+            ),
+          };
+        }),
+      };
+    } catch (e) {
+      console.error(e);
       return undefined;
     }
-
-    const { stops } = data;
-
-    return {
-      ...data,
-      stops: stops.map((stop: any) => {
-        return {
-          ...stop,
-          sound: new Sound(
-            `https://storage.googleapis.com/futar/${stop.fileName}`
-          ),
-        };
-      }),
-    };
   },
   getMusic: async (
     genre: string = "riddim"
   ): Promise<MusicResponse | undefined> => {
-    const { status, data } = await axios.get(`${BASE_URL}/music/${genre}`);
+    try {
+      const { data } = await axios.get(`${BASE_URL}/music/${genre}`);
+      const { artist, title, files } = data;
 
-    if (!data || data === "error!" || status !== 200) {
+      return {
+        artist,
+        title,
+        files: files.map((file: any) => {
+          const { sample_rate, samples_per_pixel } = file.waveform;
+
+          return {
+            ...file,
+            sound: new Sound(file.pathURL),
+            waveform: {
+              ...file.waveform,
+              sampleRate: sample_rate,
+              samplesPerPixel: samples_per_pixel,
+            },
+          };
+        }),
+      };
+    } catch (e) {
+      console.error(e);
       return undefined;
     }
-
-    const { artist, title, files } = data;
-
-    return {
-      artist,
-      title,
-      files: files.map((file: any) => {
-        const { sample_rate, samples_per_pixel } = file.waveform;
-
-        return {
-          ...file,
-          sound: new Sound(file.pathURL),
-          waveform: {
-            ...file.waveform,
-            sampleRate: sample_rate,
-            samplesPerPixel: samples_per_pixel,
-          },
-        };
-      }),
-    };
   },
 };
