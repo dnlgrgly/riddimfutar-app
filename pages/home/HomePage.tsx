@@ -25,9 +25,13 @@ export const HomePage = ({ navigation }: Props) => {
   const onRefresh = () => {
     setLoading(true);
 
-    Geolocation.getCurrentPosition(async (res) => {
-      await getAnnouncement(res);
-    });
+    Geolocation.getCurrentPosition(
+      async (res) => {
+        await getAnnouncement(res);
+      },
+      undefined,
+      { maximumAge: 10000 }
+    );
   };
 
   const getAnnouncement = async (position: GeolocationResponse) => {

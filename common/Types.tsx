@@ -8,7 +8,7 @@ export type MetadataResponse = {
   lowerLeftLongitude: number;
 };
 
-export type TripType = "BUS" | "TRAM" | "TROLLEY" | "NIGHT";
+export type TripType = "BUS" | "TRAM" | "TROLLEYBUS" | "RAIL" | "NIGHT";
 
 export type Trip = {
   color: string;

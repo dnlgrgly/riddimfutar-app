@@ -3,6 +3,7 @@ import { TripType } from "./Types";
 import Bus from "../assets/images/bkk_bus.svg";
 import Tram from "../assets/images/bkk_tram.svg";
 import Trolley from "../assets/images/bkk_trolley.svg";
+import Train from "../assets/images/bkk_train.svg";
 import Night from "../assets/images/bkk_night.svg";
 
 type Props = {
@@ -16,9 +17,11 @@ export const VehicleIcon = ({ type, size = 30 }: Props) => {
       return <Bus width={size} height={size} />;
     case "TRAM":
       return <Tram width={size} height={size} />;
-    case "TROLLEY":
+    case "TROLLEYBUS":
       return <Trolley width={size} height={size} />;
-    case "NIGHT":
+    case "RAIL":
+      return <Train width={size} height={size} />;
+    default:
       return <Night width={size} height={size} />;
   }
 };

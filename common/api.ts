@@ -1,28 +1,9 @@
 import axios from "axios";
 import Sound from "react-native-sound";
-import {
-  MetadataResponse,
-  MusicResponse,
-  Trip,
-  TripType,
-  VehicleDetails,
-} from "./Types";
+import { MetadataResponse, MusicResponse, Trip, VehicleDetails } from "./Types";
 
 // const BASE_URL = "https://riddimfutar.ey.r.appspot.com/api/v1";
 const BASE_URL = "http://localhost:8080/api/v1";
-
-const determineTripTypeFromColor = (input: string): TripType => {
-  switch (input) {
-    case "009EE3":
-      return "BUS";
-    case "FFD800":
-      return "TRAM";
-    case "E41F18":
-      return "TROLLEY";
-    default:
-      return "NIGHT";
-  }
-};
 
 export const API = {
   getMetadata: async (): Promise<MetadataResponse | undefined> => {
@@ -50,7 +31,6 @@ export const API = {
         return {
           ...vehicleWithTrip.trip,
           color: `#${color}`,
-          type: determineTripTypeFromColor(vehicleWithTrip.trip.color),
         };
       });
     } catch (e) {
